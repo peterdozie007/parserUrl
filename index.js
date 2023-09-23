@@ -8,7 +8,7 @@ const { MongoClient } = require("mongodb");
 const dns = require("dns");
 const urlParser = require("url");
 
-const client = new MongoClient(process.env.URI);
+const client = new MongoClient(process.env.URI, { useNewUrlParser: true, useUnifiedTopology: true });
 const db = client.db("urlshortner");
 const urls = db.collection("urls");
 
@@ -68,12 +68,12 @@ app.post('/api/shorturl', function (req, res) {
 app.get("/api/shorturl/:short_url", async (req, res) => {
   const { short_url } = req.params;
   const urlDoc = await urls.findOne({ short_url: +short_url });
-  if(!urlDoc){
-    res.json({error:"No URL was found"})
-  }else{
+  if (!urlDoc) {
+    res.json({ error: "No URL was found" })
+  } else {
     return res.redirect(urlDoc.url);
   }
-  
+
 })
 
 app.listen(port, function () {
